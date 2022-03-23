@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Drive;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DriveController extends Controller
 {
@@ -42,12 +43,15 @@ class DriveController extends Controller
             'name' => 'required',
             'user_id' => 'required',
             'file_id' => 'required',
-            'slug' => 'required',
             'file_size' => 'required',
             'mime_type' => 'required',
             'thumb' => 'required',
             'down_count' => 'required'
         ]);
+
+        $request['slug'] = Str::slug($request->name);
+
+
         return Drive::create($request->all());
     }
 
@@ -59,7 +63,7 @@ class DriveController extends Controller
      */
     public function show($id)
     {
-       return Drive::find($id);
+        return Drive::find($id);
     }
 
     /**
@@ -96,19 +100,18 @@ class DriveController extends Controller
     public function destroy($id)
     {
         $del = Drive::destroy($id);
-        if($del === 0){
+        if ($del === 0) {
             $response = [
                 'message' => 'Not found !',
                 'code' => 404
             ];
             return response($response);
-        }else{
+        } else {
             $response = [
                 'message' => 'success',
                 'code' => 200
             ];
             return response($response);
         }
-       
     }
 }
