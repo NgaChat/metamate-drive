@@ -11,20 +11,21 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $fileds = $request->validate([
-               'user_email' => 'required|string',
-               'user_name' => 'required|string',
-               'image' => 'required|string',
-               'google_id' => 'required|string'
+            'user_email' => 'required|string',
+            'user_name' => 'required|string',
+            'image' => 'required|string',
+            'google_id' => 'required|string'
         ]);
-        
+
         $have_user = User::where('user_email', $fileds['user_email'])->first();
-        if(!$have_user){
+
+        if (!$have_user) {
             $user = User::create([
                 'user_name' => $fileds['user_name'],
                 'user_email' => $fileds['user_email'],
                 'image' => $fileds['image'],
                 'google_id' => $fileds['google_id'],
-                
+
             ]);
 
             $token = $user->createToken('metamatedrive')->plainTextToken;
