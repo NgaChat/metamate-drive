@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('file_size')->nullable();
             $table->string('mime_type')->nullable();
             $table->text('thumb')->nullable();
-            $table->unsignedBigInteger('down_count')->nullable();
+            $table->unsignedBigInteger('down_count')->default('0');
             $table->timestamps();
         });
     }
