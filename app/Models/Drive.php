@@ -19,9 +19,5 @@ class Drive extends Model
       'down_count'
     ];
 
-    // public function user()
-    // {
-    //   return $this->belongsTo(User::class);
-      
-    // }
+   
 }

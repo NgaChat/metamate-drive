@@ -8,6 +8,10 @@ use Illuminate\Support\Str;
 
 class DriveController extends Controller
 {
+    public function __construct()
+    {
+       
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +19,8 @@ class DriveController extends Controller
      */
     public function index(Request $request)
     {
+        
+        // $this->authorize('isUser', Drive::class);
         $offset = request('offset') ?: '0';
         $limit = request('limit') ?: '30';
         $id = $request->header('id');
@@ -84,8 +90,9 @@ class DriveController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, Drive $drive)
     {
+        $this->authorize('update', $drive);
         $drive = Drive::find($id);
         $drive->update($request->all());
         return $drive;
