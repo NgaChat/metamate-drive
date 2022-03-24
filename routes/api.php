@@ -3,7 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DriveController;
+use App\Http\Controllers\AdsController;
 use App\Http\Controllers\AuthController;
+use App\Models\Ads;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,6 +20,7 @@ use App\Http\Controllers\AuthController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/drives/{id}', [DriveController::class, 'show']);
+Route::get('/ads', [AdsController::class, 'show']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
