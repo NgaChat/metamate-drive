@@ -114,9 +114,6 @@ class DriveController extends Controller
         $current_user = auth()->user();
         $drive = Drive::find($id);
 
-        var_dump($current_user->id);
-        var_dump($drive->user_id);
-
         if ($current_user->id === $drive->user_id) {
 
             $drive->update([
@@ -147,19 +144,26 @@ class DriveController extends Controller
      */
     public function destroy($id)
     {
-        $del = Drive::destroy($id);
-        if ($del === 0) {
-            $response = [
-                'message' => 'Not found !',
-                'code' => 404
-            ];
-            return response($response);
+        $current_user = auth()->user();
+        $drive = Drive::find($id);
+
+        if ($current_user->id === $drive->user_id) {
+            $del = Drive::destroy($id);
+            if ($del === 0) {
+                $response = [
+                    'message' => 'Not found !',
+                    'code' => 404
+                ];
+                return response($response);
+            } else {
+                $response = [
+                    'message' => 'success',
+                    'code' => 200
+                ];
+                return response($response);
+            }
         } else {
-            $response = [
-                'message' => 'success',
-                'code' => 200
-            ];
-            return response($response);
+            return abort(401, 'you not own this drive to delete!');
         }
     }
 }
