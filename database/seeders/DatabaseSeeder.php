@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Ads;
 use App\Models\Drive;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -16,8 +17,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::factory(5)->create();
+        User::factory()->create();
 
         Drive::factory(10)->create();
+
+        Ads::factory(5)->create();
     }
 }

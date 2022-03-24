@@ -23,8 +23,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/login', function () {
     return 'hello';
 });
+
 Route::get('/drives/{id}', [DriveController::class, 'show']);
-Route::get('/ads', [AdsController::class, 'show']);
+//done
+Route::get('/ads/{user_id}', [AdsController::class, 'show']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -32,6 +34,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/drives/{id}', [DriveController::class, 'update']);
     Route::post('/drives', [DriveController::class, 'store']);
     Route::delete('/drives/{id}', [DriveController::class, 'destroy']);
+
+    Route::post('/ads', [AdsController::class, 'store']);
+    Route::delete('/ads/{id}', [AdsController::class, 'destroy']);
+    Route::put('/ads/{id}', [AdsController::class, 'update']);
 });
 
 

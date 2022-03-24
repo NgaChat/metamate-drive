@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Drive::class);
     }
+
+    public function ads()
+    {
+        return $this->hasOne(Ads::class);
+    }
 }

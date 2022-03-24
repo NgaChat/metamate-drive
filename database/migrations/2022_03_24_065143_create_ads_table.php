@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('ads', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->text('leftside_image');
             $table->text('leftside_redirect_url');
             $table->text('rightside_image');
