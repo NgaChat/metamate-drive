@@ -129,10 +129,7 @@ class DriveController extends Controller
 
             return $drive;
         } else {
-            return response()->json([
-                'message' => 'you not own this drive!',
-                'status' => 401
-            ]);
+            return abort(401, 'you not own this drive to update!');
         }
     }
 
