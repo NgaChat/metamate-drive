@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('drives', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('name')->nullable();
-            $table->text('file_id')->nullable();
-            $table->text('slug')->nullable();
-            $table->string('file_size')->nullable();
-            $table->string('mime_type')->nullable();
-            $table->text('thumb')->nullable();
-            $table->unsignedBigInteger('down_count')->default('0');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->text('file_id');
+            $table->text('slug');
+            $table->string('file_size');
+            $table->string('mime_type');
+            $table->text('thumb');
+            $table->string('down_count')->default('0');
             $table->timestamps();
         });
     }

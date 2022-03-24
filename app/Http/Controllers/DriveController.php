@@ -10,7 +10,6 @@ class DriveController extends Controller
 {
     public function __construct()
     {
-       
     }
     /**
      * Display a listing of the resource.
@@ -19,13 +18,15 @@ class DriveController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         // $this->authorize('isUser', Drive::class);
-        $offset = request('offset') ?: '0';
-        $limit = request('limit') ?: '30';
-        $id = $request->header('id');
-        $drives = Drive::where('user_id', $id)->offset($offset)->limit($limit)->latest()->get();
-        return $drives;
+        // $offset = request('offset') ?: '0';
+        // $limit = request('limit') ?: '30';
+        // $id = $request->header('id');
+        // $drives = Drive::where('user_id', $id)->offset($offset)->limit($limit)->latest()->get();
+        // return $drives;
+        $drives = Drive::latest('created_at')->paginate(10);
+        return response()->json($drives, 200);
     }
 
     /**
@@ -45,9 +46,8 @@ class DriveController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $fields = $request->validate([
             'name' => 'required',
-            'user_id' => 'required',
             'file_id' => 'required',
             'file_size' => 'required',
             'mime_type' => 'required',
@@ -55,10 +55,18 @@ class DriveController extends Controller
             'down_count' => 'required'
         ]);
 
-        $request['slug'] = Str::slug($request->name);
+        $drive = Drive::create([
+            'name' => $fields['name'],
+            'file_id' => $fields['file_id'],
+            'file_size' => $fields['file_size'],
+            'mime_type' => $fields['mime_type'],
+            'thumb' => $fields['thumb'],
+            'down_count' => $fields['down_count'],
+            'user_id' => $request->user()->id,
+            'slug' => Str::slug($fields['name'])
+        ]);
 
-
-        return Drive::create($request->all());
+        return response()->json($drive, 201);
     }
 
     /**
@@ -92,10 +100,43 @@ class DriveController extends Controller
      */
     public function update(Request $request, $id, Drive $drive)
     {
-        $this->authorize('update', $drive);
+        $fields = $request->validate([
+            'name' => 'required',
+            'file_id' => 'required',
+            'file_size' => 'required',
+            'mime_type' => 'required',
+            'thumb' => 'required',
+            'down_count' => 'required'
+        ]);
+
+
+        // $this->authorize('update', $drive);
+        $current_user = auth()->user();
         $drive = Drive::find($id);
-        $drive->update($request->all());
-        return $drive;
+
+        var_dump($current_user->id);
+        var_dump($drive->user_id);
+
+        if ($current_user->id === $drive->user_id) {
+
+            $drive->update([
+                'name' => $fields['name'],
+                'file_id' => $fields['file_id'],
+                'file_size' => $fields['file_size'],
+                'mime_type' => $fields['mime_type'],
+                'thumb' => $fields['thumb'],
+                'down_count' => $fields['down_count'],
+                'user_id' => $request->user()->id,
+                'slug' => Str::slug($fields['name'])
+            ]);
+
+            return $drive;
+        } else {
+            return response()->json([
+                'message' => 'you not own this drive!',
+                'status' => 401
+            ]);
+        }
     }
 
     /**

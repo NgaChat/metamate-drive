@@ -27,16 +27,22 @@ class AuthController extends Controller
                 'google_id' => $fileds['google_id'],
 
             ]);
-
             $token = $user->createToken('metamatedrive')->plainTextToken;
+
             $user->remember_token = $token;
+
             $user->save();
 
             $response = [
                 'user' => $user,
                 'token' => $token
             ];
-            return response($response, 201);
+
+
+            return response()->json($response, 201);
+        } else {
+
+            return response()->json($have_user->remember_token, 200);
         }
     }
 }

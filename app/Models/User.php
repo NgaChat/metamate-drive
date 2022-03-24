@@ -35,10 +35,11 @@ class User extends Authenticatable
     protected $hidden = [
         'remember_token',
     ];
-    public function createToken()
-    {
-        //
-    }
+
+    // public function createToken()
+    // {
+    //     //
+    // }
 
     /**
      * The attributes that should be cast.
@@ -46,8 +47,8 @@ class User extends Authenticatable
      * @var array<string, string>
      */
 
-    //  public function drive()
-    //  {
-    //     return $this->hasMany(Drive::class, 'user_id','id');
-    //  }
+    public function drive()
+    {
+        return $this->hasMany(Drive::class);
+    }
 }

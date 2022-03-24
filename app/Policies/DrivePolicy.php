@@ -6,6 +6,9 @@ use App\Models\Drive;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Http\Request;
+
+
 class DrivePolicy
 {
     use HandlesAuthorization;
@@ -51,18 +54,25 @@ class DrivePolicy
      * @param  \App\Models\Drive  $drive
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(?User $user, Drive $drive)
+    public function update(User $user, Drive $drive)
     {
-        return $user->id === $drive->user_id
-                ? Response::allow()
-                : Response::deny('You do not own this post.');
+
+        $drive_id = $drive::where('user_id', $user->id)->first();
+
+        var_dump($user->id);
+        var_dump($drive_id->user_id);
+        return $user->id === $drive_id->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this drive.');
     }
 
-    public function isUser(User $user, Drive $drive)
+    public function isUser()
     {
+        $user = request()->user();
+        $drive = request()->drive();
         return $user->id === $drive->user_id
-                ? Response::allow()
-                : Response::deny('You do not own this post.');
+            ? Response::allow()
+            : Response::deny('You do not own this drive.');
     }
 
     /**
