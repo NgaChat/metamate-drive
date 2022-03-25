@@ -19,13 +19,12 @@ class DriveController extends Controller
     public function index(Request $request)
     {
 
-        // $this->authorize('isUser', Drive::class);
         // $offset = request('offset') ?: '0';
         // $limit = request('limit') ?: '30';
         // $id = $request->header('id');
         // $drives = Drive::where('user_id', $id)->offset($offset)->limit($limit)->latest()->get();
         // return $drives;
-        $drives = Drive::latest('created_at')->paginate(10);
+        $drives = Drive::where('user_id', $request->user()->id)->latest('created_at')->paginate(10);
         return response()->json($drives, 200);
     }
 
@@ -46,7 +45,7 @@ class DriveController extends Controller
      */
     public function store(Request $request)
     {
-        $fields = $request->validate([
+        $request->validate([
             'name' => 'required',
             'file_id' => 'required',
             'file_size' => 'required',
@@ -55,16 +54,7 @@ class DriveController extends Controller
             'down_count' => 'required'
         ]);
 
-        $drive = Drive::create([
-            'name' => $fields['name'],
-            'file_id' => $fields['file_id'],
-            'file_size' => $fields['file_size'],
-            'mime_type' => $fields['mime_type'],
-            'thumb' => $fields['thumb'],
-            'down_count' => $fields['down_count'],
-            'user_id' => $request->user()->id,
-            'slug' => Str::slug($fields['name'])
-        ]);
+        $drive = Drive::create($request->all() + ['user_id' => $request->user()->id, 'slug' => Str::slug($request->name)]);
 
         return response()->json($drive, 201);
     }
@@ -98,9 +88,11 @@ class DriveController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    // Currently not using this update method
     public function update(Request $request, $id, Drive $drive)
     {
-        $fields = $request->validate([
+        $request->validate([
             'name' => 'required',
             'file_id' => 'required',
             'file_size' => 'required',
@@ -116,16 +108,7 @@ class DriveController extends Controller
 
         if ($current_user->id === $drive->user_id) {
 
-            $drive->update([
-                'name' => $fields['name'],
-                'file_id' => $fields['file_id'],
-                'file_size' => $fields['file_size'],
-                'mime_type' => $fields['mime_type'],
-                'thumb' => $fields['thumb'],
-                'down_count' => $fields['down_count'],
-                'user_id' => $request->user()->id,
-                'slug' => Str::slug($fields['name'])
-            ]);
+            $drive->update($request->all() + ['user_id' => $current_user->id, 'slug' => Str::slug($request->name)]);
 
             return $drive;
         } else {

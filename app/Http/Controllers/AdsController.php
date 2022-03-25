@@ -36,28 +36,11 @@ class AdsController extends Controller
     public function store(Request $request)
     {
         $user_id = $request->user()->id;
-        $fields = $request->validate([
-            'leftside_image' => 'string',
-            'leftside_redirect_url' => 'string',
-            'rightside_image' => 'string',
-            'rightside_redirect_url' => 'string',
-            'banner_image' => 'string',
-            'banner_redirect_url' => 'string'
-        ]);
 
         $check_ifExist = Ads::where('user_id', $user_id)->first();
 
-
         if (!$check_ifExist) {
-            $ads = Ads::create([
-                'user_id' => $user_id,
-                'leftside_image' => $fields['leftside_image'],
-                'leftside_redirect_url' => $fields['leftside_redirect_url'],
-                'rightside_image' => $fields['rightside_image'],
-                'rightside_redirect_url' => $fields['rightside_redirect_url'],
-                'banner_image' => $fields['banner_image'],
-                'banner_redirect_url' => $fields['banner_redirect_url'],
-            ]);
+            $ads = Ads::create($request->all() + ['user_id' => $user_id]);
 
             return response()->json($ads, 201);
         } else {
@@ -125,11 +108,7 @@ class AdsController extends Controller
         if ($current_user->id === $ads->user_id) {
             $del = Ads::destroy($id);
             if ($del === 0) {
-                $response = [
-                    'message' => 'Not found !',
-                    'code' => 404
-                ];
-                return response($response);
+                return abort(404, 'Not found for this ads.');
             } else {
                 $response = [
                     'message' => 'success',
