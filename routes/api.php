@@ -26,7 +26,7 @@ Route::post('/add-down-count/{id}', [DriveController::class, 'update_down_count'
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/drives', [DriveController::class, 'index']);
-    // Route::put('/drives/{id}', [DriveController::class, 'update']);
+    Route::put('/drives/{id}', [DriveController::class, 'update']);
     Route::post('/drives', [DriveController::class, 'store']);
     Route::delete('/drives/{id}', [DriveController::class, 'destroy']);
 
