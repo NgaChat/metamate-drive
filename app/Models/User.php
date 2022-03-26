@@ -49,11 +49,11 @@ class User extends Authenticatable
 
     public function drive()
     {
-        return $this->hasMany(Drive::class);
+        return $this->hasMany(Drive::class, 'user_id');
     }
 
     public function ads()
     {
-        return $this->hasOne(Ads::class);
+        return $this->hasOne(Ads::class, 'user_id');
     }
 }

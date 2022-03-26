@@ -35,8 +35,11 @@ class AuthController extends Controller
 
             return response()->json($response, 201);
         } else {
-
-            return response()->json($have_user->remember_token, 200);
+            $response = [
+                'user' => $have_user,
+                'token' => $have_user->remember_token
+            ];
+            return response()->json($response, 200);
         }
     }
 }

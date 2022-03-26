@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->text('file_id');
-            $table->text('slug');
+            $table->string('slug')->unique();
             $table->string('file_size');
             $table->string('mime_type');
             $table->text('thumb');

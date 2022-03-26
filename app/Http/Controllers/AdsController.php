@@ -14,17 +14,7 @@ class AdsController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return Ads::where('user_id', auth()->user()->id)->first();
     }
 
     /**
@@ -35,7 +25,7 @@ class AdsController extends Controller
      */
     public function store(Request $request)
     {
-        $user_id = $request->user()->id;
+        $user_id = auth()->user()->id;
 
         $check_ifExist = Ads::where('user_id', $user_id)->first();
 
@@ -49,28 +39,6 @@ class AdsController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($user_id)
-    {
-        return Ads::where('user_id', $user_id)->first();
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -79,14 +47,14 @@ class AdsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user_id = $request->user()->id;
+        $user_id = auth()->user()->id;
 
 
-        $current_user = auth()->user();
         $ads = Ads::find($id);
 
-        if ($current_user->id === $ads->user_id) {
+        if ($user_id === $ads->user_id) {
             $update =  $ads->update($request->all() + ['user_id' => $user_id]);
+
             return response()->json($update, 200);
         } else {
             return abort(401, 'you not own this ads to update!');

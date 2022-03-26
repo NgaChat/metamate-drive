@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('ads', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->text('leftside_image');
-            $table->text('leftside_redirect_url');
-            $table->text('rightside_image');
-            $table->text('rightside_redirect_url');
-            $table->text('banner_image');
-            $table->text('banner_redirect_url');
+            $table->text('leftside_image')->nullable();
+            $table->text('leftside_redirect_url')->nullable();
+            $table->text('rightside_image')->nullable();
+            $table->text('rightside_redirect_url')->nullable();
+            $table->text('banner_image')->nullable();
+            $table->text('banner_redirect_url')->nullable();
             $table->timestamps();
         });
     }

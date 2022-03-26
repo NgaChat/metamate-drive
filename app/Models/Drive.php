@@ -24,4 +24,9 @@ class Drive extends Model
   {
     return $this->belongsTo(User::class, 'user_id');
   }
+
+  public function ads()
+  {
+    return $this->belongsTo(Ads::class);
+  }
 }

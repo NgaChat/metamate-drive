@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('user_email')->unique()->nullable();
             $table->text('image')->nullable();
             $table->text('google_id')->nullable();
-            $table->boolean('is_admin')->default(true);
+            $table->string('is_admin')->default('true');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -20,14 +20,9 @@ use App\Models\Ads;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/login', function () {
-    return 'hello';
-});
+Route::get('/drives/slug/{slug}', [DriveController::class, 'show']);
 
-Route::get('/drives/{id}', [DriveController::class, 'show']);
-//done
-Route::get('/ads/{user_id}', [AdsController::class, 'show']);
-
+Route::post('/add-down-count/{id}', [DriveController::class, 'update_down_count']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/drives', [DriveController::class, 'index']);
@@ -35,12 +30,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/drives', [DriveController::class, 'store']);
     Route::delete('/drives/{id}', [DriveController::class, 'destroy']);
 
+    Route::get('/ads', [AdsController::class, 'index']);
     Route::post('/ads', [AdsController::class, 'store']);
     Route::delete('/ads/{id}', [AdsController::class, 'destroy']);
     Route::put('/ads/{id}', [AdsController::class, 'update']);
+
+    Route::get('/current-user', function () {
+        return auth()->user();
+    });
 });
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });

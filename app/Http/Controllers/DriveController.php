@@ -3,20 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Drive;
+use App\Models\Ads;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class DriveController extends Controller
 {
-    public function __construct()
-    {
-    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
 
         // $offset = request('offset') ?: '0';
@@ -24,17 +23,8 @@ class DriveController extends Controller
         // $id = $request->header('id');
         // $drives = Drive::where('user_id', $id)->offset($offset)->limit($limit)->latest()->get();
         // return $drives;
-        $drives = Drive::where('user_id', $request->user()->id)->latest('created_at')->paginate(10);
+        $drives = Drive::where('user_id', auth()->user()->id)->latest('created_at')->paginate(10);
         return response()->json($drives, 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
     }
 
     /**
@@ -45,16 +35,8 @@ class DriveController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'file_id' => 'required',
-            'file_size' => 'required',
-            'mime_type' => 'required',
-            'thumb' => 'required',
-            'down_count' => 'required'
-        ]);
 
-        $drive = Drive::create($request->all() + ['user_id' => $request->user()->id, 'slug' => Str::slug($request->name)]);
+        $drive = Drive::create($this->validateDrive() + ['user_id' => $request->user()->id, 'slug' => Str::slug($request->name)]);
 
         return response()->json($drive, 201);
     }
@@ -65,20 +47,18 @@ class DriveController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug, Drive $drive)
     {
-        return Drive::find($id);
-    }
+        $drive_data = $drive->where('slug', $slug)->first();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $ads = Ads::where('user_id', $drive_data->user_id)->first();
+
+        $response = [
+            'drive' => $drive_data,
+            'ads' => $ads
+        ];
+
+        return $response;
     }
 
     /**
@@ -92,28 +72,24 @@ class DriveController extends Controller
     // Currently not using this update method
     public function update(Request $request, $id, Drive $drive)
     {
-        $request->validate([
-            'name' => 'required',
-            'file_id' => 'required',
-            'file_size' => 'required',
-            'mime_type' => 'required',
-            'thumb' => 'required',
-            'down_count' => 'required'
-        ]);
-
-
-        // $this->authorize('update', $drive);
         $current_user = auth()->user();
         $drive = Drive::find($id);
 
         if ($current_user->id === $drive->user_id) {
 
-            $drive->update($request->all() + ['user_id' => $current_user->id, 'slug' => Str::slug($request->name)]);
+            $drive->update($this->validateDrive() + ['user_id' => $current_user->id, 'slug' => Str::slug($request->name)]);
 
             return $drive;
         } else {
             return abort(401, 'you not own this drive to update!');
         }
+    }
+
+    public function update_down_count($id)
+    {
+        $drive = Drive::find($id);
+
+        return $drive->update(['down_count' => request()->down_count]);
     }
 
     /**
@@ -145,5 +121,16 @@ class DriveController extends Controller
         } else {
             return abort(401, 'you not own this drive to delete!');
         }
+    }
+
+    public function validateDrive()
+    {
+        return request()->validate([
+            'name' => 'required',
+            'file_id' => 'required',
+            'file_size' => 'required',
+            'mime_type' => 'required',
+            'thumb' => 'required',
+        ]);
     }
 }

@@ -24,4 +24,9 @@ class Ads extends Model
   {
     return $this->BelongsTo(User::class);
   }
+
+  public function drive()
+  {
+    return $this->hasMany(Drive::class);
+  }
 }
