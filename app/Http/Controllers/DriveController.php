@@ -36,7 +36,7 @@ class DriveController extends Controller
     public function store(Request $request)
     {
 
-        $drive = Drive::create($this->validateDrive() + ['user_id' => $request->user()->id, 'slug' => Str::slug($request->name)]);
+        $drive = Drive::create($this->validateDrive() + ['user_id' => $request->user()->id, 'slug' => str()->slug($request->name)]);
 
         return response()->json($drive, 201);
     }
